@@ -34,7 +34,7 @@ jobs:
     - name: Compile JNI libraries
       env:
         NINJA_PATH: /usr/bin/ninja
-        NDK: ${{ envs.ANDROID_NDK_HOME }}
+        NDK: ${{ env.ANDROID_NDK_HOME }}
       run: |
         cd TMessagesProj/jni
         ./build_libvpx_clang.sh
