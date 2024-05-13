@@ -9,6 +9,8 @@ jobs:
     env:
       ANDROID_NDK_URL: https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
       ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/21.4.7075529
+      NDK: /usr/local/lib/android/sdk/ndk/21.4.7075529
+      NINJA_PATH: /usr/bin/ninja
     steps:
     - name: Setup Android NDK
       run: |
@@ -34,9 +36,6 @@ jobs:
         submodules: true
 
     - name: Compile JNI libraries
-      env:
-        NINJA_PATH: /usr/bin/ninja
-        NDK: ${{ env.ANDROID_NDK_HOME }}
       run: |
         cd TMessagesProj/jni
         ./build_libvpx_clang.sh
