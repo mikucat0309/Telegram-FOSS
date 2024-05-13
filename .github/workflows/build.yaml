@@ -13,14 +13,17 @@ jobs:
       NDK: /usr/local/lib/android/sdk/ndk/21.4.7075529
       NINJA_PATH: /usr/bin/ninja
     steps:
-    - name: Setup Android NDK
+    - uses: actions/cache@v4
+      id: cache-ndk
+      with:
+        path: ${{ env.ANDROID_NDK_HOME }}
+
+    - name: Download Android NDK
+      if: steps.cache-ndk.outputs.cache-hit != 'true'
       run: |
-        mkdir -p cache
-        if [ ! -f cache/ndk.zip ]; then
-          curl -o cache/ndk.zip "$ANDROID_NDK_URL"
-        fi
-        unzip -q cache/ndk.zip
-        mv android-ndk-*/ "$ANDROID_NDK_HOME"
+        curl -o ndk.zip "$ANDROID_NDK_URL"
+        unzip -q ndk.zip
+        mv android-ndk-r21e "$ANDROID_NDK_HOME"
 
     - name: Install packages
       env:
@@ -38,12 +41,13 @@ jobs:
 
     - name: Compile JNI libraries
       run: |
-        cd TMessagesProj/jni
+        pushd TMessagesProj/jni
         ./build_libvpx_clang.sh
         ./build_ffmpeg_clang.sh
         ./patch_ffmpeg.sh
         ./patch_boringssl.sh
         ./build_boringssl.sh
+        popd
 
     - name: Build APK
       run: |
