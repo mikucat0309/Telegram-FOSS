@@ -12,11 +12,11 @@ jobs:
     steps:
     - name: Setup Android NDK
       run: |
-        mkdir -p /var/cache
-        if [ ! -f /var/cache/ndk.zip ]; then
-          curl -o /var/cache/ndk.zip "$ANDROID_NDK_URL"
+        mkdir -p cache
+        if [ ! -f cache/ndk.zip ]; then
+          curl -o cache/ndk.zip "$ANDROID_NDK_URL"
         fi
-        unzip /var/cache/ndk.zip
+        unzip cache/ndk.zip
         mv android-ndk-*/ "$ANDROID_NDK_HOME"
 
     - name: Install packages
