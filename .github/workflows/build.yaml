@@ -17,6 +17,7 @@ jobs:
       id: cache-ndk
       with:
         path: ${{ env.ANDROID_NDK_HOME }}
+        key: android-ndk-r21e-linux-x86_64
 
     - name: Download Android NDK
       if: steps.cache-ndk.outputs.cache-hit != 'true'
@@ -50,7 +51,9 @@ jobs:
         popd
 
     - name: Build APK
+      env:
+        API_KEYS: ${{ secrets.API_KEYS }}
       run: |
-        printf "${{ secrets.API_KEYS }}" > API_KEYS
+        printf "$API_KEYS" > API_KEYS
         ./gradlew :TMessagesProj_App:assembleAfatRelease
         find TMessagesProj_App/build -name '*.apk'
