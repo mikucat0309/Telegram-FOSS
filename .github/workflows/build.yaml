@@ -28,7 +28,7 @@ jobs:
       run: sudo apt install -y libuv1 ninja-build yasm patch
 
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v3
+      uses: gradle/actions/setup-gradle@v3
       with:
         gradle-version: 7.2
 
@@ -49,4 +49,4 @@ jobs:
       run: |
         printf "${{ secrets.API_KEYS }}" > API_KEYS
         ./gradlew :TMessagesProj_App:assembleAfatRelease
-        ls -l TMessagesProj_App/app/build/outputs
+        find TMessagesProj_App/build -name '*.apk'
