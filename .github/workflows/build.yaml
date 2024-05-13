@@ -13,25 +13,27 @@ jobs:
       NDK: /usr/local/lib/android/sdk/ndk/21.4.7075529
       NINJA_PATH: /usr/bin/ninja
     steps:
-    - uses: actions/cache@v4
+    - name: Setup Android NDK cache
+      uses: actions/cache@v4
       id: cache-ndk
       with:
         path: ${{ env.ANDROID_NDK_HOME }}
         key: android-ndk-r21e-linux-x86_64
 
-    - name: Download Android NDK
+    - name: Setup Android NDK
       if: steps.cache-ndk.outputs.cache-hit != 'true'
       run: |
         curl -o ndk.zip "$ANDROID_NDK_URL"
         unzip -q ndk.zip
         mv android-ndk-r21e "$ANDROID_NDK_HOME"
 
-    - name: Install packages
+    - name: Install needed packages
       env:
         DEBIAN_FRONTEND: noninteractive
-      run: sudo apt install -y libuv1 ninja-build yasm patch
+      run: sudo apt install -y libuv1 ninja-build yasm
 
-    - uses: actions/setup-java@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '11'
@@ -41,7 +43,8 @@ jobs:
       with:
         gradle-version: 7.2
 
-    - uses: actions/checkout@v4
+    - name: Checkout source code
+      uses: actions/checkout@v4
       with:
         submodules: true
 
@@ -55,10 +58,15 @@ jobs:
         ./build_boringssl.sh
         popd
 
-    - name: Build APK
+    - name: Setup Telegram API keys
       env:
         API_KEYS: ${{ secrets.API_KEYS }}
-      run: |
-        printf "$API_KEYS" > API_KEYS
-        ./gradlew :TMessagesProj_App:assembleAfatRelease
-        find TMessagesProj_App/build -name '*.apk'
+      run: printf "$API_KEYS" > API_KEYS
+
+    - name: Build multi-arch APK
+      run: ./gradlew :TMessagesProj_App:assembleAfatRelease
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Telegram-FOSS-${{ github.sha }}.apk
+        path: TMessagesProj_App/build/outputs/apk/afat/release/app.apk
