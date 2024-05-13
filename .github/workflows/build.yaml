@@ -16,13 +16,13 @@ jobs:
         if [ ! -f cache/ndk.zip ]; then
           curl -o cache/ndk.zip "$ANDROID_NDK_URL"
         fi
-        unzip cache/ndk.zip
+        unzip -q cache/ndk.zip
         mv android-ndk-*/ "$ANDROID_NDK_HOME"
 
     - name: Install packages
       env:
         DEBIAN_FRONTEND: noninteractive
-      run: apt install -y libuv1 ninja-build yasm patch
+      run: sudo apt install -y libuv1 ninja-build yasm patch
 
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v3
