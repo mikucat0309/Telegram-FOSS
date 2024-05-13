@@ -47,6 +47,6 @@ jobs:
 
     - name: Build APK
       run: |
-        printf "${{ secret.API_KEYS }}" > API_KEYS
+        printf "${{ secrets.API_KEYS }}" > API_KEYS
         ./gradlew :TMessagesProj_App:assembleAfatRelease
         ls -l TMessagesProj_App/app/build/outputs
